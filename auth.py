@@ -34,8 +34,8 @@ def requires_auth(postAuthOnly=False):
 	def decorator(f):
 		def wrapped_function(*args, **kwargs):
 			# require ssl for api requests with auth
-			if "https://" not in request.url and not (postAuthOnly and request.method != 'POST'):
-				message = { 'success': False, 'status': 'Resources requiring authentication also require ssl.'}
+			if "https://" not in request.url and request.headers.get("x_forwarded_proto") != "https" and not (postAuthOnly and request.method != 'POST'):
+				message = { 'success': False, 'status': 'Resources requiring authentication also require ssl. %s' % request.url}
 				resp = jsonify(message)
 				resp.status_code = 403
 				return resp
