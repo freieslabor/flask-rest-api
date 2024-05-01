@@ -1,8 +1,8 @@
-import room
-from conf import *
+from .room import isRoomOpen, getStatus
+from .conf import *
 
 def info():
-	roomIsOpen = room.isRoomOpen()
+	roomIsOpen = isRoomOpen()
 
 	message = {
 		'api': '0.13',
@@ -24,7 +24,7 @@ def info():
 		'logo': 'https://blog.freieslabor.org/images/logo.svg',
 		'state': {
 			'open': roomIsOpen,
-			'lastchange': room.getStatus()['since'],
+			'lastchange': getStatus()['since'],
 			'message': infoMessage(roomIsOpen),
 			'icon': {
 				'open': 'https://blog.freieslabor.org/images/open.png',

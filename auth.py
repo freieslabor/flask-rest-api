@@ -1,6 +1,8 @@
 from functools import update_wrapper
+
 from flask import request, jsonify
-from conf import *
+
+from .conf import *
 
 """
 Simple method to check API credentials

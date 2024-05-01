@@ -1,5 +1,6 @@
 import logging
-from conf import *
+
+from .conf import *
 
 """
 Simple global logging.

@@ -1,10 +1,14 @@
+#!/usr/bin/env python3
+
 from flask import Flask, request, jsonify, render_template, send_file
-from conf import *
-from auth import requires_auth
-from httpaccesscontrol import crossdomain
-from misc import parameters_given, getParam
-import info, room
-from flask.ext.cache import Cache
+from flask_caching import Cache
+
+from .conf import *
+from .auth import requires_auth
+from .httpaccesscontrol import crossdomain
+from .misc import parameters_given, getParam, isTrue
+from .info import info
+from .room import isRoomOpen, getStatus, submitStatus
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -38,9 +42,9 @@ Submit/get room status information.
 def api_room():
 	if request.method == 'POST':
 		open = isTrue(request.form['open'])
-		return room.submitStatus(open)
+		return submitStatus(open)
 	elif request.method == 'GET':
-		return jsonify(room.getStatus())
+		return jsonify(getStatus())
 
 """
 Get room archive.
@@ -57,7 +61,7 @@ Get room status information as image.
 @app.route('/api/room_image', methods=['GET'])
 @crossdomain(origin='*')
 def api_room_image():
-	filename = OPEN_IMAGE if room.isRoomOpen() else CLOSED_IMAGE
+	filename = OPEN_IMAGE if isRoomOpen() else CLOSED_IMAGE
 	return send_file(filename, mimetype="image/png")
 
 """
@@ -67,7 +71,7 @@ Get general information + room status.
 @app.route('/api/info')
 @crossdomain(origin='*')
 def api_info():
-	return jsonify(info.info())
+	return jsonify(info())
 
 """
 Server for testing purposes.

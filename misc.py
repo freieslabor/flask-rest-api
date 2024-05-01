@@ -1,6 +1,8 @@
 from functools import update_wrapper
+import json
+import time
+
 from flask import request, jsonify
-import json, time
 
 """
 Checks if given parameters are available as GET or POST variables.
