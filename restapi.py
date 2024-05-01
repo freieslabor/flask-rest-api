@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 from conf import *
 from auth import requires_auth
 from httpaccesscontrol import crossdomain
@@ -32,15 +32,33 @@ def api_root():
 Submit/get room status information.
 """
 @app.route('/api/room', methods=['GET', 'POST'])
-@parameters_given(['people'])
+@parameters_given(['open'])
 @crossdomain(origin='*')
 @requires_auth(True)
 def api_room():
 	if request.method == 'POST':
-		people = getParam('people')
-		return room.submitStatus(people)
+		open = isTrue(request.form['open'])
+		return room.submitStatus(open)
 	elif request.method == 'GET':
 		return jsonify(room.getStatus())
+
+"""
+Get room archive.
+"""
+@app.route('/api/room_archive', methods=['GET'])
+@crossdomain(origin='*')
+def api_room_archive():
+	return send_file(ROOM_ARCHIVE_FILE, mimetype='application/json')
+
+"""
+Get room status information as image.
+"""
+@app.route('/api/room_image.png', methods=['GET'])
+@app.route('/api/room_image', methods=['GET'])
+@crossdomain(origin='*')
+def api_room_image():
+	filename = OPEN_IMAGE if room.isRoomOpen() else CLOSED_IMAGE
+	return send_file(filename, mimetype="image/png")
 
 """
 Get general information + room status.

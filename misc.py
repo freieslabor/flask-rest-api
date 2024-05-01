@@ -61,15 +61,25 @@ def getStatus(filename):
 """
 Updates given status info.
 """
-def setStatus(filename, newStatus):
+def setStatus(filename, newStatus, lastMeasure=False):
 	oldStatus = getStatus(filename)
+	lastUpdate = oldStatus["lastUpdate"]
 	try:
 		del oldStatus["lastUpdate"]
+		del oldStatus["lastMeasurement"]
 	except KeyError:
 		pass
-
 	if oldStatus != newStatus:
 		newStatus["lastUpdate"] = int(time.time())
+	if lastMeasure:
+		# last measurement: now
+		newStatus["lastMeasurement"] = int(time.time())
+		if "lastUpdate" not in newStatus:
+			# recover lastUpdate
+			newStatus["lastUpdate"] = lastUpdate
+
+	# update or measurement enabled? write!
+	if oldStatus != newStatus:
 		with open(filename, 'w') as f:
 			f.write(simplejson.dumps(newStatus))
 
