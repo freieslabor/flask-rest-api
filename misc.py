@@ -1,6 +1,6 @@
 from functools import update_wrapper
 from flask import request, jsonify
-import simplejson, time
+import json, time
 
 """
 Checks if given parameters are available as GET or POST variables.
@@ -55,7 +55,7 @@ Returns dictionary with requested status info.
 """
 def getStatus(filename):
 	with open(filename, 'r') as f:
-		status = simplejson.loads(f.read())
+		status = json.loads(f.read())
 		return status
 
 """
@@ -81,6 +81,6 @@ def setStatus(filename, newStatus, lastMeasure=False):
 	# update or measurement enabled? write!
 	if oldStatus != newStatus:
 		with open(filename, 'w') as f:
-			f.write(simplejson.dumps(newStatus))
+			f.write(json.dumps(newStatus))
 
 	return { 'success': True }

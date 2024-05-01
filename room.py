@@ -2,7 +2,7 @@ from logger import log
 from conf import *
 from datetime import *
 import time
-import simplejson
+import json
 from flask import jsonify
 
 
@@ -12,7 +12,7 @@ JSON output for /room.
 def getStatus():
 	try:
 		with open(ROOM_STATUS_FILE, 'r') as f:
-			return simplejson.loads(f.read())
+			return json.loads(f.read())
 
 	except IOError:
 		log.exception("Could not read %s." % ROOM_STATUS_FILE)
@@ -35,7 +35,7 @@ This method gets called when a new status gets submitted
 def submitStatus(open_):
 	try:
 		with open(ROOM_STATUS_FILE, 'r') as f:
-			room = simplejson.loads(f.read())
+			room = json.loads(f.read())
 
 		if room['open'] != open_:
 			with open(ROOM_STATUS_FILE, 'w') as f:
@@ -44,7 +44,7 @@ def submitStatus(open_):
 								'open': open_ }
 
 				addToArchive({'open': open_, 'lastchange': int(time.time())})
-				f.write(simplejson.dumps(newStatus))
+				f.write(json.dumps(newStatus))
 
 		return jsonify({ 'success': True })
 
@@ -57,9 +57,9 @@ def submitStatus(open_):
 
 def addToArchive(newStatus):
 	with open(ROOM_ARCHIVE_FILE, 'r') as f:
-		archive = simplejson.loads(f.read())
+		archive = json.loads(f.read())
 
 	archive.append(newStatus)
 
 	with open(ROOM_ARCHIVE_FILE, 'w') as f:
-		simplejson.dump(archive, f)
+		json.dump(archive, f)
