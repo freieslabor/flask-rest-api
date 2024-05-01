@@ -72,11 +72,3 @@ Get general information + room status.
 @crossdomain(origin='*')
 def api_info():
 	return jsonify(info())
-
-"""
-Server for testing purposes.
-"""
-if __name__ == '__main__':
-	from gevent import pywsgi
-	import sys
-	pywsgi.WSGIServer(('', 8000), log=sys.stdout).serve_forever()
